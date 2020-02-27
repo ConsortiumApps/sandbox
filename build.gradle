@@ -9,6 +9,7 @@
 plugins {
     // Apply the java plugin to add support for Java
     id 'java'
+    id 'idea'
 
     // Apply the application plugin to add support for building an application
     id 'application'
@@ -30,13 +31,17 @@ repositories {
 }
 
 dependencies {
-    // This dependency is found on compile classpath of this component and consumers.
+    implementation platform('org.springframework.boot:spring-boot-dependencies:2.1.0.RELEASE')
+    implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'com.google.guava:guava:27.0.1-jre'
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.10.1'
     implementation 'joda-time:joda-time:2.10.5'
-
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
     // Use JUnit test framework
-    testImplementation 'junit:junit:4.12'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
 
 }
 
@@ -65,6 +70,24 @@ tasks.withType(com.github.spotbugs.SpotBugsTask) {
     reports.xml.enabled = false
     reports.html.enabled = true
 }
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+        }
+    }
+
+    test {
+        java {
+            srcDirs = ['test']
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
 sonarqube {
     properties {
         property "sonar.projectKey", "ConsortiumApps_sandbox"
@@ -75,4 +98,4 @@ sonarqube {
 }
 
 // Define the main class for the application
-mainClassName = 'playground.App'
+mainClassName = 'playground.Application'
